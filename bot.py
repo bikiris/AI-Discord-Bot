@@ -1,28 +1,29 @@
-import discord
-import logging
+import discord.ext
+from discord.ext import commands
 from completion import chat_completion
 import os
 from dotenv import load_dotenv
+
 load_dotenv()
+client = commands.Bot()
 
-class MyClient(discord.Client):
-    async def on_ready(self):
-        print('Logged on as', self.user)
 
-    async def on_message(self, message):
-        # don't respond to ourselves
-        if message.author == self.user:
-            return
+@client.event
+async def on_ready():
+    print('Logged on as', client.user)
 
-        if message.content.startswith('/'):
-            print(message.content[1:])
-            chatgpt = chat_completion(message.content[1:])
-            await message.channel.send(chatgpt)
 
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-intents = discord.Intents.default()
-intents.message_content = True
-client = MyClient(intents=intents)
+@client.event
+async def on_message(message):
+    # don't respond to ourselves
+    if message.author == client.user:
+        return
 
-client.run(os.environ['DISCORD_API'],log_handler=handler)
 
+@client.slash_command(name="gpt_query", description="Ask ChatGPT a question")
+async def first_command(ctx, arg):
+    chatgpt = chat_completion(arg)
+    await ctx.respond(chatgpt)
+
+
+client.run(os.environ['DISCORD_API'])
