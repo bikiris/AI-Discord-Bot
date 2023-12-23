@@ -11,13 +11,10 @@ client = OpenAI(api_key=os.environ['OPENAI_API'])
 def chat_completion(message):
     response = client.chat.completions.create(
         model="gpt-3.5-turbo-1106",
-        messages=[
-            {"role": "system", "content": "You are a helpful assistant."},
-            {"role": "user", "content": message}
-        ],
-        max_tokens=300
+        messages=message,
+        max_tokens=400
     )
-    print(response)
+    print("In chat completion", response)
     return response.choices[0].message.content
 
 

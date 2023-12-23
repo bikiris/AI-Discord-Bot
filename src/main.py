@@ -11,10 +11,33 @@ load_dotenv()
 bot = Bot()
 
 
+@bot.slash_command(name="test", description="Check if the bot is up")
+async def ping(ctx):
+    await ctx.respond("pong")
+
+
 @bot.slash_command(name="gpt_query", description="Ask ChatGPT a question")
 async def chat(ctx, arg):
-    chatgpt = chat_completion(arg)
-    await ctx.respond(chatgpt)
+    message = []
+    if ctx.author.id in bot.conversation_history:
+        message = bot.conversation_history[ctx.author.id]
+        if len(message) > 9:
+            message = message[2:]
+        message.append(
+            {"role": "user", "content": arg},
+        )
+    else:
+        message = [
+            {"role": "system", "content": "You are a helpful assistant."},
+            {"role": "user", "content": arg},
+        ]
+    completion = chat_completion(message)
+    message.append(
+        {"role": "system", "content": completion},
+    )
+    bot.conversation_history[ctx.author.id] = message
+    print(bot.conversation_history[ctx.author.id])
+    await ctx.respond(completion)
 
 
 @bot.slash_command(name="image_generation", description="Ask AI for an image")
@@ -24,7 +47,7 @@ async def image(ctx, arg):
         title="Image"
     )
     embed.set_image(url=url)
-    await ctx.send(embed=embed, reference=ctx.message)
+    await ctx.respond(embed=embed, reference=ctx.message)
 
 
 @bot.slash_command(name="gpt_vision", description="Generate a meme caption")
