@@ -9,6 +9,3 @@ class Bot(discord.Bot):
         print(self.user.name)
         print(self.user.id)
         print('------')
-
-    # async def on_interaction(self, interaction):
-    #     print(interaction)

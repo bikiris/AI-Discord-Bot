@@ -46,8 +46,9 @@ async def image(ctx, arg):
     embed = discord.Embed(
         title="Image"
     )
-    embed.set_image(url=url)
-    await ctx.respond(embed=embed, reference=ctx.message)
+    file = discord.File("./AI.png")
+    embed.set_image(url="attachment://AI.png")
+    await ctx.respond(file=file, embed=embed)
 
 
 @bot.slash_command(name="gpt_vision", description="Generate a meme caption")

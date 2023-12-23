@@ -1,5 +1,6 @@
 import base64
 import os
+import urllib
 from dotenv import load_dotenv
 from openai import OpenAI
 
@@ -26,10 +27,8 @@ def image_generation(message):
         quality="standard",
         n=1,
     )
-    print(response)
     image_url = response.data[0].url
-    # urllib.request.urlretrieve(image_url, "AI.png")
-    print(image_url)
+    urllib.request.urlretrieve(image_url, "AI.png")
     return image_url
 
 
